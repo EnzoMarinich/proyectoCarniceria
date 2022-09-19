@@ -1,0 +1,21 @@
+*{
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+}
+
+html{
+    font-size: 62,5%;
+    font-family: 'Dancing Script', cursive;
+    font-family: 'Kanit', sans-serif;
+}
+
+.carnes{
+    display: flex;
+    max-width: 1200px;
+    height: 500px;
+    column-gap: 10px;
+    margin-top: 20px; 
+}
+
+

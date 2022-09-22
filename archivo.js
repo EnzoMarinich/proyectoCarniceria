@@ -30,7 +30,7 @@ let carrito = []
 let total = Number(0)
 let enzo = true
 let carritoDeCompras = document.querySelector(".carrito")
-let carritoTuMama = document.querySelector(".carritoTuMama")
+let carritoModal = document.querySelector(".carritoModal")
 let contadorCarrito = document.getElementById("contadorCarrito")
 
 
@@ -69,7 +69,7 @@ const eliminarDelCarrito = (prodID)=>{
 }
 
 const actualizarCarrito = ()=>{
-    carritoTuMama.innerHTML = ""
+    carritoModal.innerHTML = ""
 
     carrito.forEach((prod)=>{
         const div = document.createElement("div")
@@ -78,7 +78,7 @@ const actualizarCarrito = ()=>{
         <p>${prod.corte}        precio: $${prod.precio}</p>
         <button class="botonEliminar" onclick="eliminarDelCarrito(${prod.id})"  >eliminar</button>
         `
-        carritoTuMama.appendChild(div)
+        carritoModal.appendChild(div)
         
     })
 }

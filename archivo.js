@@ -29,6 +29,9 @@ let card = temp.content.querySelector("div")
 let carrito = []
 let total = Number(0)
 let enzo = true
+let carritoDeCompras = document.querySelector(".carrito")
+let carritoTuMama = document.querySelector(".carritoTuMama")
+let contadorCarrito = document.getElementById("contadorCarrito")
 
 
 arrayStock.forEach((prod)=>{
@@ -43,14 +46,48 @@ arrayStock.forEach((prod)=>{
 
     buttonComprar.addEventListener("click", ()=>{
     sumarAlCarrito(prod.id)
+    contarCarrito()
     })
 })
+
+function contarCarrito(){
+    contadorCarrito.innerText = `carrito ${carrito.length}`
+}
 
 
 function sumarAlCarrito (prodID){
     eleccion = arrayStock.find((prod)=> prod.id === prodID)
     carrito.push(eleccion)
 }
+
+const eliminarDelCarrito = (prodID)=>{
+    let item = carrito.find((prod)=> prod.id === prodID)
+    let indice = carrito.indexOf(item)
+    carrito.splice(indice, 1)
+    actualizarCarrito()
+    contarCarrito()
+}
+
+const actualizarCarrito = ()=>{
+    carritoTuMama.innerHTML = ""
+
+    carrito.forEach((prod)=>{
+        const div = document.createElement("div")
+        div.classList.add("producto__carrito")
+        div.innerHTML= `
+        <p>${prod.corte}        precio: $${prod.precio}</p>
+        <button class="botonEliminar" onclick="eliminarDelCarrito(${prod.id})"  >eliminar</button>
+        `
+        carritoTuMama.appendChild(div)
+        
+    })
+}
+
+carritoDeCompras.addEventListener("click", ()=>{
+    actualizarCarrito()
+})
+
+
 
 
 // function sumarAlCarrito(x, y){

@@ -10,12 +10,34 @@ html{
     font-family: 'Kanit', sans-serif;
 }
 
+
+
 .carnes{
     display: flex;
-    max-width: 1200px;
+    justify-content: center;
     height: 500px;
     column-gap: 10px;
-    margin-top: 20px; 
+    margin-top: 20px;
 }
 
+card-img-top{
+    height: 20px;
+}
 
+.section__carrito{
+    display: flex;
+    width: 100vw;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.carritoTuMama{
+    gap: 15px;
+    width: 300px;
+    border: solid 2px black;
+}
+
+.producto__carrito button{
+    background-color: red;
+}

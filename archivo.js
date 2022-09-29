@@ -32,8 +32,13 @@ let enzo = true
 let carritoDeCompras = document.querySelector(".carrito")
 let carritoModal = document.querySelector(".carritoModal")
 let contadorCarrito = document.getElementById("contadorCarrito")
+let cerrarCarrito = document.querySelector(".closeCarrito")
+let totalAPagar = 0
 
 
+
+
+// pintamos cada producto en el dom
 arrayStock.forEach((prod)=>{
     let cardClonada = card.cloneNode(true)
     sect.appendChild(cardClonada)
@@ -41,6 +46,7 @@ arrayStock.forEach((prod)=>{
     cardClonada.children[1].innerText = prod.corte
     cardClonada.children[2].innerText = `$${prod.precio} por KG`
     cardClonada.children[3].classList.add(`button${prod.id}`)
+
 
     let buttonComprar = document.querySelector(`.button${prod.id}`)
 
@@ -50,42 +56,77 @@ arrayStock.forEach((prod)=>{
     })
 })
 
+// para que el numerito alado del carrito vaya acorde a los productos que elegimos
 function contarCarrito(){
     contadorCarrito.innerText = `carrito ${carrito.length}`
 }
 
-
+// funcion para sumar producto al carrito
 function sumarAlCarrito (prodID){
     eleccion = arrayStock.find((prod)=> prod.id === prodID)
     carrito.push(eleccion)
+    localStorage.setItem(`carrito`, JSON.stringify(carrito))
+    totalAPagar += eleccion.precio
 }
+
+
+// funcion para eliminar producto del carito
 
 const eliminarDelCarrito = (prodID)=>{
     let item = carrito.find((prod)=> prod.id === prodID)
     let indice = carrito.indexOf(item)
     carrito.splice(indice, 1)
+    totalAPagar -= item.precio
     actualizarCarrito()
     contarCarrito()
 }
 
+// creamos y mostramos el carrito que se visualizara en el dom
 const actualizarCarrito = ()=>{
     carritoModal.innerHTML = ""
-
     carrito.forEach((prod)=>{
         const div = document.createElement("div")
         div.classList.add("producto__carrito")
         div.innerHTML= `
         <p>${prod.corte}        precio: $${prod.precio}</p>
-        <button class="botonEliminar" onclick="eliminarDelCarrito(${prod.id})"  >eliminar</button>
+        <button class="botonEliminar" onclick="eliminarDelCarrito(${prod.id})"  >🗑</button>
         `
         carritoModal.appendChild(div)
+
         
     })
+    // creamos para que se vea el total en el carrito
+    const totalCarrito = document.createElement("div")
+    totalCarrito.innerHTML= `<p>Total = $${totalAPagar}</p>`
+    carritoModal.appendChild(totalCarrito)
+
+    //creamos el boton vaciar carrito
+    const botonVaciarCarrito = document.createElement("button")
+    botonVaciarCarrito.classList.add("boton__vaciar")
+    botonVaciarCarrito.innerText = "vaciar carrito"
+    carritoModal.appendChild(botonVaciarCarrito)
+
+    // cambiamos de display none a flex para que se visualize en la pantalla
+    document.querySelector(".section__carrito").style.display = "flex"
+
+    //vaciar carrito
+    botonVaciarCarrito.addEventListener("click", ()=>{
+        carrito = []
+        totalAPagar = 0
+        actualizarCarrito()
+        contarCarrito()
+    })
+
 }
 
 carritoDeCompras.addEventListener("click", ()=>{
     actualizarCarrito()
 })
+
+cerrarCarrito.addEventListener("click", ()=>{
+    document.querySelector(".section__carrito").style.display = "none"
+})
+
 
 
 

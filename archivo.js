@@ -1,8 +1,9 @@
 class Stock {
-    constructor(id, corte, precio, img){
+    constructor(id, corte, precio, cantidad, img){
         this.id= id
         this.corte =  corte
         this.precio = precio
+        this.cantidad = cantidad
         this.imagen = img
     }
     mostrarInfo(){
@@ -11,11 +12,12 @@ class Stock {
 }
 
 const arrayStock = []
-arrayStock.push(new Stock(1, "vacio", 1250, "img/a4460b_103ba30945f4425b8981c0d4336718de_mv2.jpg")) 
-arrayStock.push(new Stock(2, "costilla", 1100, "img/costilla-cortepreferido-paraguayos-infoganaderia2-medium-size.jpg"))
-arrayStock.push(new Stock(3, "costeleta", 800, "img/costeleta.jpg"))
-arrayStock.push(new Stock(4, "matambre", 900, "img/Corte-matambre-de-res.jpg"))
-arrayStock.push(new Stock(5, "cuadril", 950, "img/cuadril.jpg"))
+arrayStock.push(new Stock(1, "vacio", 1250, 1, "img/a4460b_103ba30945f4425b8981c0d4336718de_mv2.jpg")) 
+arrayStock.push(new Stock(2, "costilla", 1100, 1, "img/costilla-cortepreferido-paraguayos-infoganaderia2-medium-size.jpg"))
+arrayStock.push(new Stock(3, "costeleta", 800, 1, "img/costeleta.jpg"))
+arrayStock.push(new Stock(4, "matambre", 900, 1, "img/Corte-matambre-de-res.jpg"))
+arrayStock.push(new Stock(5, "cuadril", 950, 1, "img/cuadril.jpg"))
+
 
 
 
@@ -26,7 +28,7 @@ arrayStock.push(new Stock(5, "cuadril", 950, "img/cuadril.jpg"))
 let sect = document.querySelector("section")
 let temp = sect.querySelector("template")
 let card = temp.content.querySelector("div")
-let carrito = []
+let carrito = JSON.parse(localStorage.getItem(`carrito`)) || []
 let total = Number(0)
 let enzo = true
 let carritoDeCompras = document.querySelector(".carrito")
@@ -34,7 +36,6 @@ let carritoModal = document.querySelector(".carritoModal")
 let contadorCarrito = document.getElementById("contadorCarrito")
 let cerrarCarrito = document.querySelector(".closeCarrito")
 let totalAPagar = 0
-
 
 
 
@@ -52,6 +53,7 @@ arrayStock.forEach((prod)=>{
 
     buttonComprar.addEventListener("click", ()=>{
     sumarAlCarrito(prod.id)
+    toast(prod.id)
     contarCarrito()
     })
 })
@@ -63,12 +65,27 @@ function contarCarrito(){
 
 // funcion para sumar producto al carrito
 function sumarAlCarrito (prodID){
-    eleccion = arrayStock.find((prod)=> prod.id === prodID)
-    carrito.push(eleccion)
-    localStorage.setItem(`carrito`, JSON.stringify(carrito))
+    existe = carrito.some(prod=> prod.id === prodID)
+
+    if(existe){
+        const prod = carrito.map(prod=>{
+            if(prod.id === prodID){
+                prod.cantidad++
+            }
+        })
+            
+    } else {
+        eleccion = arrayStock.find((prod)=> prod.id === prodID)
+        carrito.push(eleccion)       
+}
+    guardarCarrito()
     totalAPagar += eleccion.precio
 }
 
+//funcion para guardar carrito en localstorage
+function guardarCarrito(){
+    localStorage.setItem(`carrito`, JSON.stringify(carrito))
+}
 
 // funcion para eliminar producto del carito
 
@@ -76,7 +93,9 @@ const eliminarDelCarrito = (prodID)=>{
     let item = carrito.find((prod)=> prod.id === prodID)
     let indice = carrito.indexOf(item)
     carrito.splice(indice, 1)
-    totalAPagar -= item.precio
+    totalAPagar = totalAPagar - (item.precio * item.cantidad)
+    item.cantidad = 1
+    guardarCarrito()
     actualizarCarrito()
     contarCarrito()
 }
@@ -88,8 +107,12 @@ const actualizarCarrito = ()=>{
         const div = document.createElement("div")
         div.classList.add("producto__carrito")
         div.innerHTML= `
-        <p>${prod.corte}        precio: $${prod.precio}</p>
-        <button class="botonEliminar" onclick="eliminarDelCarrito(${prod.id})"  >🗑</button>
+        <div class="carrito__detalles">
+            <p>${prod.corte}</p>
+            <p>$${prod.precio}</p>
+            <p>x${prod.cantidad}kg</p>
+        </div>
+        <button class="botonEliminar" onclick="eliminarDelCarrito(${prod.id})">-</button>
         `
         carritoModal.appendChild(div)
 
@@ -100,11 +123,16 @@ const actualizarCarrito = ()=>{
     totalCarrito.innerHTML= `<p>Total = $${totalAPagar}</p>`
     carritoModal.appendChild(totalCarrito)
 
-    //creamos el boton vaciar carrito
+    //creamos el boton vaciar carrito y finalizar compra
     const botonVaciarCarrito = document.createElement("button")
     botonVaciarCarrito.classList.add("boton__vaciar")
     botonVaciarCarrito.innerText = "vaciar carrito"
     carritoModal.appendChild(botonVaciarCarrito)
+
+    const finalizarCompra = document.createElement("button")
+    finalizarCompra.classList.add("boton__finalizar")
+    finalizarCompra.innerText = "finalizar compra"
+    carritoModal.appendChild(finalizarCompra)
 
     // cambiamos de display none a flex para que se visualize en la pantalla
     document.querySelector(".section__carrito").style.display = "flex"
@@ -113,6 +141,7 @@ const actualizarCarrito = ()=>{
     botonVaciarCarrito.addEventListener("click", ()=>{
         carrito = []
         totalAPagar = 0
+        guardarCarrito()
         actualizarCarrito()
         contarCarrito()
     })
@@ -128,6 +157,16 @@ cerrarCarrito.addEventListener("click", ()=>{
 })
 
 
+//funcion para que aparezca el toast cuando agreamos al carrito algun producto
+const toast = (prodID)=>{
+    const x = arrayStock.find((prod)=>prod.id === prodID)
+    Toastify({
+
+        text: `Has agregado al carrito ${x.corte} `,
+        duration: 3000,
+        }).showToast();
+
+}
 
 
 

@@ -1,34 +1,26 @@
-class Stock {
-    constructor(id, corte, precio, cantidad, img){
-        this.id= id
-        this.corte =  corte
-        this.precio = precio
-        this.cantidad = cantidad
-        this.imagen = img
-    }
-    mostrarInfo(){
-        return `corte: ${this.corte}  precio: $${this.precio} x kg.`
-    }
-}
+async function fetchProductos(){
+    const response = await fetch(`./data.json`)
+    return await response.json()
+} 
 
-const arrayStock = []
-arrayStock.push(new Stock(1, "vacio", 1250, 1, "img/a4460b_103ba30945f4425b8981c0d4336718de_mv2.jpg")) 
-arrayStock.push(new Stock(2, "costilla", 1100, 1, "img/costilla-cortepreferido-paraguayos-infoganaderia2-medium-size.jpg"))
-arrayStock.push(new Stock(3, "costeleta", 800, 1, "img/costeleta.jpg"))
-arrayStock.push(new Stock(4, "matambre", 900, 1, "img/Corte-matambre-de-res.jpg"))
-arrayStock.push(new Stock(5, "cuadril", 950, 1, "img/cuadril.jpg"))
+let arrayStock = []
+
+fetchProductos().then(productos=> {arrayStock = productos})
+
+fetchProductos()
+                .then(productos=>{
+                    arrayStock = productos
+                    pintarProd()
+                })
 
 
 
-
-
-// compra = prompt(`que quieres comprar? \n 1-${vacio.mostrarInfo()} \n 2-${costilla.mostrarInfo()} \n 3-${costeleta.mostrarInfo()} \n 4-abandonar \n 5-ver carrito`);
 
 
 let sect = document.querySelector("section")
 let temp = sect.querySelector("template")
 let card = temp.content.querySelector("div")
-let carrito = JSON.parse(localStorage.getItem(`carrito`)) || []
+let carrito = []
 let total = Number(0)
 let enzo = true
 let carritoDeCompras = document.querySelector(".carrito")
@@ -39,11 +31,13 @@ let totalAPagar = 0
 
 
 
+
 // pintamos cada producto en el dom
-arrayStock.forEach((prod)=>{
+function pintarProd (){
+    arrayStock.forEach((prod)=>{
     let cardClonada = card.cloneNode(true)
     sect.appendChild(cardClonada)
-    cardClonada.children[0].src = prod.imagen
+    cardClonada.children[0].src = prod.img
     cardClonada.children[1].innerText = prod.corte
     cardClonada.children[2].innerText = `$${prod.precio} por KG`
     cardClonada.children[3].classList.add(`button${prod.id}`)
@@ -57,7 +51,7 @@ arrayStock.forEach((prod)=>{
     contarCarrito()
     })
 })
-
+}
 // para que el numerito alado del carrito vaya acorde a los productos que elegimos
 function contarCarrito(){
     contadorCarrito.innerText = `carrito ${carrito.length}`
@@ -76,10 +70,11 @@ function sumarAlCarrito (prodID){
             
     } else {
         eleccion = arrayStock.find((prod)=> prod.id === prodID)
+        eleccion.cantidad = 1
         carrito.push(eleccion)       
 }
-    guardarCarrito()
-    totalAPagar += eleccion.precio
+totalAPagar += eleccion.precio
+guardarCarrito()
 }
 
 //funcion para guardar carrito en localstorage
@@ -129,10 +124,20 @@ const actualizarCarrito = ()=>{
     botonVaciarCarrito.innerText = "vaciar carrito"
     carritoModal.appendChild(botonVaciarCarrito)
 
+
+
     const finalizarCompra = document.createElement("button")
     finalizarCompra.classList.add("boton__finalizar")
     finalizarCompra.innerText = "finalizar compra"
     carritoModal.appendChild(finalizarCompra)
+    finalizarCompra.addEventListener("click", ()=>{
+        const { value: email } =  Swal.fire({
+            title: 'Confirmando compra',
+            input: 'email',
+            inputLabel: 'Ingrese su email. Luego nos comunicaremos a este para finalizar con unos pequeños detalles de la compra. Gracias!  ',
+            inputPlaceholder: 'Enter your email address'
+          })
+    })
 
     // cambiamos de display none a flex para que se visualize en la pantalla
     document.querySelector(".section__carrito").style.display = "flex"
@@ -167,6 +172,8 @@ const toast = (prodID)=>{
         }).showToast();
 
 }
+
+
 
 
 

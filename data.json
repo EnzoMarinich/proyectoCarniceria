@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "corte": "Vacio",
+        "precio": 1200,
+        "cantidad": 1,
+        "img": "./img/a4460b_103ba30945f4425b8981c0d4336718de_mv2.jpg"
+    },
+    {
+        "id": 2,
+        "corte": "Costilla",
+        "precio": 1100,
+        "cantidad": 1,
+        "img": "./img/costilla-cortepreferido-paraguayos-infoganaderia2-medium-size.jpg"
+    },
+    {
+        "id": 3,
+        "corte": "Costeleta",
+        "precio":800,
+        "cantidad": 1,
+        "img": "./img/costeleta.jpg"
+    },
+    {
+        "id": 4,
+        "corte": "Matambre",
+        "precio": 900,
+        "cantidad": 1,
+        "img": "./img/Corte-matambre-de-res.jpg"
+    },
+    {
+        "id": 5,
+        "corte": "Cuadril",
+        "precio": 950,
+        "cantidad": 1,
+        "img": "./img/cuadril.jpg"
+    }
+]
